@@ -58,6 +58,12 @@ launchthunar() {
     xcq last-details-view-column-widths    "$ws"
     xcq last-details-view-visible-columns  "${cs%,}"
     xcq last-details-view-column-order     "${cs%,}"
+    xcq last-icon-view-zoom-level          THUNAR_ZOOM_LEVEL_NORMAL
+    xcq last-details-view-zoom-level       THUNAR_ZOOM_LEVEL_SMALLEST
+    xcq last-show-hidden                   false
+    xcq last-details-view-fixed-columns    true
+    xcq misc-full-path-in-title            true
+    xcq misc-text-beside-icons             false
 
     # loop each character in the rule string
     for ((i=0;i<${#rule};i++)); do 
