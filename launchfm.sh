@@ -74,10 +74,26 @@ launchthunar() {
         t ) xcq last-sort-column  "THUNAR_COLUMN_DATE_MODIFIED" ;;
         n ) xcq last-sort-column  "THUNAR_COLUMN_NAME"          ;;
         s ) xcq last-sort-column  "THUNAR_COLUMN_SIZE"          ;;
-        i ) xcq last-view         "ThunarIconView"              ;;
         l ) xcq last-view         "ThunarDetailsView"           ;;
       esac
     done
+
+    [[ $rule =~ ([1-7]) ]] && {
+
+      case "${BASH_REMATCH[1]}" in
+        1 ) sajze=SMALLEST ;;
+        2 ) sajze=SMALLER  ;;
+        3 ) sajze=SMALL    ;;
+        4 ) sajze=NORMAL   ;;
+        5 ) sajze=LARGE    ;;
+        6 ) sajze=LARGER   ;;
+        7 ) sajze=LARGEST  ;;
+      esac
+
+      xcq last-view   "ThunarIconView"
+      xcq last-icon-view-zoom-level  "THUNAR_ZOOM_LEVEL_$sajze"
+
+    }
 
     # start thunar with trgdir in the background
     thunar "${__trgdir}" &

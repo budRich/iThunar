@@ -42,7 +42,7 @@ main() {
   #         (New before old) sort
 
   case "$1" in
-    toggle-layout  ) togglerule i l                  ;;
+    toggle-layout  ) togglerule 7 l                  ;;
     toggle-order   ) togglerule a d                  ;;
     toggle-sort    ) togglerule n t s                ;;
     save-layout    ) parserules "$__pth" "$__rul"    ;;
@@ -54,8 +54,43 @@ main() {
     open-terminal  ) spawnterminal                   ;;
     display-path   ) dunstfm -m "${__pth/$HOME/'~'}" ;;
     add-bookmark   ) bookmark "$__pth"               ;;
+    zoom-in        ) zoom 1                         ;;
+    zoom-out       ) zoom -1                         ;;
   esac
 
+}
+
+zoom() {
+
+  local cz # current zoom
+  local nz # new zoom
+  local key=minus
+  local newrule=$__rul
+
+  # if listview, do nothing
+  [[ $__rul =~ ([1-7]) ]] && {
+    cz="${BASH_REMATCH[1]}"
+    nz=$((cz+$1))
+    ((nz > 0)) && ((nz < 8)) && {
+      newrule="${__rul/$cz/$nz}"
+    }
+  }
+
+  [[ $newrule != "$__rul" ]] && {
+
+    (($1==1)) && key=plus
+
+    # notify-send "ctrl+alt+shift+${key}"
+
+    sleep .1
+    xdotool key --delay 8 --clearmodifiers --window "$__wid" alt+shift+${key} \
+            set_window --classname "thunar-$newrule" "$__wid"
+
+    sleep .04
+    parserules "$__pth" "$newrule"
+    
+    temptitle "$newrule"
+  }
 }
 
 bookmark() {
@@ -280,7 +315,7 @@ temptitle() {
     [[ -n $newtitle ]] && {
       newtitle="${newtitle% -*}"
       newtitle="${newtitle/$HOME\//}"
-      # newtitle="${newtitle/$HOME/'~'}"
+      newtitle="${newtitle/$HOME/'~'}"
       i3-msg -q "[id=$__wid]" title_format "$newtitle"
     }
   } &
@@ -303,15 +338,20 @@ togglerule() {
   if [[ $__rul =~ $1 ]]; then
     newrule="${__rul/$1/$2}"
 
+  # if toggle to listview, match any number (iconsize)
+  elif [[ $2 = l ]] && [[ $__rul =~ ([1-7]) ]]; then
+    newrule="${__rul/${BASH_REMATCH[1]}/$2}"
+
   # if current rule contains any of the other
   # arguments, replace it with the first argument
   elif [[ $__rul =~ ([${rest}]) ]]; then
     newrule="${__rul/${BASH_REMATCH[1]}/$1}"
+    
   fi
 
   # if new rule is really new, update layout and titleformat
   [[ $newrule != "$__rul" ]] && {
-    updatefm -i "$__ins" -d "$__wid" -r "$newrule"
+    updatefm -i "$__ins" -d "$__wid" -r "$newrule" -p "$__pth"
     temptitle "$newrule"
   }
   
