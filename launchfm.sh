@@ -100,8 +100,8 @@ launchthunar() {
 
     # --synk to wait for the window to exist
     # --print d will print the windowid
-    windowid="$(i3get --synk                              \
-                      --class 'Thunar$'                   \
+    windowid="$(i3get --synk                                \
+                      --class 'Thunar$'                      \
                       --title "$__trgdir - File Manager"  \
                       --print d
                )"
@@ -135,7 +135,7 @@ main() {
   if [[ -z $__trgdir ]]; then
     # no path specified, try to target guess window
     containerid="$(i3viswiz --class "$__trgclass")"
-
+    echo "$containerid jjj"
     if [[ -z $containerid ]]; then
       # no visible windows
       containerid="$(i3get --class "$__trgclass")"
@@ -177,7 +177,8 @@ main() {
   fi
 }
 
-focusthunar() { i3run --conid "$1" --nohide --summon ;}
+focusthunar() { i3run --conid "$1" --summon ;}
+# focusthunar() { i3run --conid "$1" --nohide --summon ;}
 escapechars() { printf '%q' "${1/'~'/$HOME}" ;}
 xcq() {
 

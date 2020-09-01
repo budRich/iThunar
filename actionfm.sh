@@ -11,13 +11,12 @@
 
 main() {
   # store output of i3get in i3got array
-  i3got=($(i3get --print dict))
-
+  mapfile -t i3got < <(i3get --print dict)
   # example i3get output:
-  # 6291460
-  # thunar-ina
-  # ThunarD
-  # /home/bud - File Manager
+  # 6291460                     : d - window-id
+  # thunar-ina                  : i - instance
+  # ThunarD                     : c - class
+  # /home/bud - File Manager    : t - title
 
   # currently active window info:
   __wid="${i3got[0]}"     # window ID
