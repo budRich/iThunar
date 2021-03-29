@@ -17,8 +17,8 @@ __collumnstoshow=3                    # number of columns to show
 
 # __collumns: collumn order and width of all collumns
 __collumns=(
-  NAME:235
-  DATE_MODIFIED:93
+  NAME:245
+  DATE_MODIFIED:100
   SIZE:50
   MIME_TYPE:67
   PERMISSIONS:50
@@ -86,7 +86,7 @@ launchthunar() {
     # --print d will print the windowid
     windowid="$(i3get --synk                              \
                       --class 'Thunar$'                   \
-                      --title "$__trgdir - File Manager"  \
+                      --title "$__trgdir"  \
                       --print d
                )"
 
@@ -143,7 +143,7 @@ main() {
   else
     # trg dir is konwn
     __trgdir="$(escapechars "$__trgdir")"
-    containerid="$(i3get --title "$__trgdir - File Manager" \
+    containerid="$(i3get --title "$__trgdir" \
                          --class "$__trgclass"               
                   )"
 

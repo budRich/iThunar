@@ -43,6 +43,9 @@ xcq last-view                        ThunarIconView
 xcq last-show-hidden                 false
 xcq last-details-view-fixed-columns  true
 xcq misc-text-beside-icons           false
+# new finds
+xcq misc-directory-specific-settings true
+xcq misc-image-size-in-statusbar     true
 
 xcq last-details-view-column-order \
     THUNAR_COLUMN_NAME,THUNAR_COLUMN_SIZE,THUNAR_COLUMN_TYPE,THUNAR_COLUMN_DATE_MODIFIED

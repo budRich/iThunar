@@ -9,8 +9,13 @@
 : "${THUNAR_BOOKMARKS:="$XDG_CONFIG_HOME/Thunar/bookmarks"}"
 
 main() {
-  if [[ -d "${1/'~'/$HOME}" ]]; then
-    updatehistory "$1"
+  local dest
+
+  # expands leading literal tilde to HOME
+  [[ ${dest:=$1} =~ ^[~] ]] && dest=${1/'~'/~}
+
+  if [[ -d $dest ]]; then
+    updatehistory "$dest"
   else
     trgcon="${1:-$LAUNCHFM_DEFAULT_CONTAINER}"
 
@@ -20,21 +25,36 @@ main() {
                    --top "$(cat "$THUNAR_BOOKMARKS")" \
            )"
 
-    [[ -d ${dest/'~'/$HOME} ]] || exit 1
+    [[ -z $dest ]] && exit 1
+    [[ $dest =~ ^[~] ]] && dest=${dest/'~'/~}
 
-    launchfm -c "$trgcon" -p "${dest/'~'/$HOME}"
+    [[ -d $dest ]] || {
+      notify-send "favfm: dir $dest doesn't exist"
+      updatehistory remove "$dest"
+      exit 1
+    }
+
+    launchfm -c "$trgcon" -p "$dest"
   fi
 }
 
 updatehistory() {
-  if [[ -f $THUNAR_HISTORY ]]; then 
-    awk -i inplace -v dir="${1/$HOME/'~'}" '
-      NR==1 {print dir}
-      $0 != dir {print}
-    ' "$THUNAR_HISTORY"
-  else
-    echo "${1/$HOME/'~'}" > "$THUNAR_HISTORY"
-  fi
+
+  # ${!#} is last arg ($1 can be command remove)
+  local tmpfile dest=${!#}
+
+  # translate leading HOME to '~'
+  [[ ${dest:=${!#}} =~ ^$HOME ]] && dest=${dest/~/'~'}
+
+  {
+    [[ $1 = remove ]] || echo "$dest"
+    # remove entries with both variants of home
+    [[ -f $THUNAR_HISTORY ]] \
+      && grep -Ev "^$dest|${dest/'~'/~}" "$THUNAR_HISTORY"
+  } > "${tmpfile:=$(mktemp)}"
+
+  mv -f "$tmpfile" "$THUNAR_HISTORY"
+  
 }
 
 main "${@}"
