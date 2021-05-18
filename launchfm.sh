@@ -102,6 +102,7 @@ launchthunar() {
 
 }
 
+
 main() {
 
   local containerid
@@ -115,7 +116,7 @@ main() {
   done
 
   __trgclass="Thunar$__trgcon"
-
+  
   if [[ -z $__trgdir ]]; then
     # no path specified, try to target guess window
     containerid="$(i3viswiz --class "$__trgclass")"
